@@ -1,0 +1,3 @@
+/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/build/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/build/CMakeFiles/turing.dir
