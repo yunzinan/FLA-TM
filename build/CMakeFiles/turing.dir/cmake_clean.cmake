@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "../bin/turing"
   "../bin/turing.pdb"
   "CMakeFiles/turing.dir/turing-project/main.cpp.o"
+  "CMakeFiles/turing.dir/turing-project/tm.cpp.o"
 )
 
 # Per-language clean rules from dependency scanning.

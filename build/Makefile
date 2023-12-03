@@ -150,6 +150,33 @@ turing-project/main.cpp.s:
 	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/turing-project/main.cpp.s
 .PHONY : turing-project/main.cpp.s
 
+turing-project/tm.o: turing-project/tm.cpp.o
+
+.PHONY : turing-project/tm.o
+
+# target to build an object file
+turing-project/tm.cpp.o:
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/turing-project/tm.cpp.o
+.PHONY : turing-project/tm.cpp.o
+
+turing-project/tm.i: turing-project/tm.cpp.i
+
+.PHONY : turing-project/tm.i
+
+# target to preprocess a source file
+turing-project/tm.cpp.i:
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/turing-project/tm.cpp.i
+.PHONY : turing-project/tm.cpp.i
+
+turing-project/tm.s: turing-project/tm.cpp.s
+
+.PHONY : turing-project/tm.s
+
+# target to generate assembly for a file
+turing-project/tm.cpp.s:
+	$(MAKE) -f CMakeFiles/turing.dir/build.make CMakeFiles/turing.dir/turing-project/tm.cpp.s
+.PHONY : turing-project/tm.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,6 +189,9 @@ help:
 	@echo "... turing-project/main.o"
 	@echo "... turing-project/main.i"
 	@echo "... turing-project/main.s"
+	@echo "... turing-project/tm.o"
+	@echo "... turing-project/tm.i"
+	@echo "... turing-project/tm.s"
 .PHONY : help
 
 

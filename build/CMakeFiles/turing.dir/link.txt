@@ -1,1 +1,1 @@
-/usr/bin/c++     CMakeFiles/turing.dir/turing-project/main.cpp.o  -o ../bin/turing 
+/usr/bin/c++     CMakeFiles/turing.dir/turing-project/main.cpp.o CMakeFiles/turing.dir/turing-project/tm.cpp.o  -o ../bin/turing 
