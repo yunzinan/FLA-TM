@@ -185,11 +185,93 @@ void TuringMachine::printConfig() {
     Log("========== END ==========");  
 }
 
-void TuringMachine::run(string input) {
-    Log("start running on input %s", input.c_str());
-
-}
 
 void TuringMachine::step() {
 
+}
+
+
+void TuringMachine::initTape(string input) {
+    // we can always assmue that in the step 0, only 0th tape has non-blank info
+    this->__tape.resize(this->_N);
+    this->__head.resize(this->_N);
+    for (int i = 0; i < this->_N; i++) {
+        this->__head[i] = 0;
+    }
+    // init the 0th tape
+    // input e.g.: 1001001
+    for (int i = 0; i < input.length(); i++) {
+        string curSym = input.substr(i, 1);
+        this->__tape[0].push_back(curSym);
+    }
+    // now deal with the others
+    for (int i = 1; i < this->_N; i++) {
+        this->__tape[i].push_back(string("_"));
+    }
+}
+
+void TuringMachine::printStep() {
+    /**
+     *  ---------------------------------------------
+        Step   : 5
+        State  : cp
+        Acc    : No
+        Index0 : 0 1 2 3 4 5 6
+        Tape0  : 1 0 0 1 0 0 1
+        Head0  :         ^
+        Index1 : 0 1 2 3 4
+        Tape1  : 1 0 0 1 _
+        Head1  :         ^
+        ---------------------------------------------
+     */
+
+    string _step      = "Step   : " + to_string(this->__step) + "\n";
+    string _state     = "State  : " + this->__state + "\n"; 
+    string _acc;
+    if (this->__acc) {_acc = "Acc    : Yes\n";}
+    else {_acc =             "Acc    : No\n";}
+    printf("%s", _step.c_str());
+    printf("%s", _state.c_str());
+    printf("%s", _acc.c_str()); 
+    for(int i = 0; i < this->_N; i++) {
+        printSingleTape(i);
+    }
+
+
+    printf("---------------------------------------------\n"); 
+}
+
+void TuringMachine::printSingleTape(int index) {
+    deque<string> &curTape = this->__tape[index];
+    int n = curTape.size();
+    string _index = "Index" + to_string(index) + " : ";
+    printf("%s", _index.c_str());
+    // TODO: to be fix in the future
+    for (int i = 0; i < n; i++) {
+        printf("%d ", i);
+    }
+    printf("\n");
+    string _tape = "Tape" + to_string(index) + "  : ";
+    printf("%s", _tape.c_str());
+    for (int i = 0; i < n; i++) {
+        printf("%s ", curTape[i].c_str());
+    }
+    printf("\n");
+    string _head = "Head" + to_string(index) + "  : " + to_string(this->__head[index]);
+    printf("%s", _head.c_str());
+    printf("\n");
+}
+
+void TuringMachine::run(string input) {
+    this->__input = input;
+    this->initTape(this->__input);
+    this->__state = this->_q0;
+    this->__step = 0;
+    this->__acc = false;
+    printf("Input: %s\n", this->__input.c_str());
+    printf("==================== RUN ====================\n");
+    printStep();
+    // do {
+    //     step();
+    // }while(!this->__acc);
 }

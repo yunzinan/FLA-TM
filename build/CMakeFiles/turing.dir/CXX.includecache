@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/turing-project/tm.cpp
+/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/tm.cpp
 tm.hpp
-/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/turing-project/tm.hpp
+/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/tm.hpp
 
-/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/turing-project/tm.hpp
+/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/tm.hpp
 iostream
 -
 algorithm
@@ -19,10 +19,16 @@ vector
 -
 string
 -
+queue
+-
 map
 -
 fstream
 -
 sstream
+-
+stdio.h
+-
+string.h
 -
 

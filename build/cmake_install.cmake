@@ -1,4 +1,4 @@
-# Install script for directory: /mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework
+# Install script for directory: /mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

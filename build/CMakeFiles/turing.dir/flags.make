@@ -6,5 +6,5 @@ CXX_FLAGS =   -std=gnu++14
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/mnt/c/Users/Jack_shen/Desktop/23Fall/形式语言与自动机/TM-proj/framework/turing-project 
+CXX_INCLUDES = -I/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project 
 
