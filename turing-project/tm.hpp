@@ -11,7 +11,7 @@
 #include <string.h>
 // this is used for keeping track of the running status of the prog. all unnecessary output will use Log(...)
 // note that in verbose mode, all output will use printf/cout/cerr
-#define DEBUG
+// #define DEBUG
 
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? (strrchr(__FILE__, '/') + 1):__FILE__)

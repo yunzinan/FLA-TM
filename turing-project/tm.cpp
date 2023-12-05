@@ -354,20 +354,75 @@ void TuringMachine::printStep() {
 void TuringMachine::printSingleTape(int index) {
     deque<string> &curTape = this->__tape[index];
     int n = curTape.size();
-    string _index = "Index" + to_string(index) + " : ";
+    string _index = "Index" + to_string(index) + " :";
     printf("%s", _index.c_str());
     // TODO: to be fix in the future
+    // further job1: change the indices(specially, the -3 -2 -1 case)
+    /*
+    e.g. this->__left[0] = 3,
+         curTape.size(i.e., n) = 6
+         then, the correct indices should be:
+         3 2 1 0 1 2
+    */
+    vector<int> indices;
+    indices.resize(n);
     for (int i = 0; i < n; i++) {
-        printf("%d ", i);
+        indices[i] = i - this->__left[index]; // 0 - 3 = -3
+        if (indices[i] < 0) indices[i] = -indices[i];
+    } 
+    // further job2: omit the blanks
+    int l = 0, r = 0; // l should be min (first non-blank sym, header), r should be max(last non-blank sym, header[index])
+    // find the l
+    for (int i = 0; i < n; i++) {  
+        if (curTape[i] != this->_B) {
+            l = i;
+            break;
+        }
+        else {
+            l++;
+        }
+    }
+    if (this->__head[index] < l) {l = this->__head[index];};
+    // find the r 
+    for (int i = n-1; i >= 0; i--) {
+        if (curTape[i] != this->_B) {
+            r = i;
+            break;
+        }
+        else {
+            r--;
+        }
+    }
+    if (this->__head[index] > r) r = this->__head[index];
+    for (int i = l; i <= r; i++) {
+        printf(" %d", indices[i]);
     }
     printf("\n");
-    string _tape = "Tape" + to_string(index) + "  : ";
+    Log("head: %d, l: %d, r: %d", this->__head[index], l, r);
+    string _tape = "Tape" + to_string(index) + "  :";
     printf("%s", _tape.c_str());
-    for (int i = 0; i < n; i++) {
-        printf("%s ", curTape[i].c_str());
+    for (int i = l; i <= r; i++) {
+        if(to_string(indices[i]).length() == 1 || indices[i] == 10) printf(" %s", curTape[i].c_str()); // XXX: special case: '10'
+        else {
+            // XXX: note: here we assume that indices cannot go beyond -99~99, i.e. use no more than 2 bit to represent
+            // XXX: special case: the first one should always be one blank before
+            if (i == l) {
+                printf(" %s", curTape[i].c_str());
+            }
+            else printf("  %s", curTape[i].c_str());
+        }
     }
     printf("\n");
-    string _head = "Head" + to_string(index) + "  : " + to_string(this->__head[index]);
+    // further job3: set the correct header pos
+    string tmp;
+    for (int i = l; i < this->__head[index]; i++) {
+        if(to_string(indices[i]).length() == 1) tmp += "  "; // XXX: tricky things: here we don't need to consider '10', cause we need to go over it
+        else {
+            // XXX: note: here we assume that indices cannot go beyond -99~99, i.e. use no more than 2 bit to represent
+            tmp += "   ";
+        }
+    }
+    string _head = "Head" + to_string(index) + "  : " + tmp + "^";
     printf("%s", _head.c_str());
     printf("\n");
 }
@@ -398,6 +453,7 @@ void TuringMachine::run(string input) {
     }
     printf("Result: ");
     for (int i = 0; i < this->__tape[0].size(); i++) {
+        if (this->__tape[0][i] == this->_B) continue;
         cout << this->__tape[0][i];
     }
     printf("\n");
