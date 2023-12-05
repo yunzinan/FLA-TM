@@ -1,4 +1,6 @@
 ; this TM program is used to make a simple multiplication function
+; @author: yunzinan
+; @date: 2023/12/5
 ; Input: a string of a's and b's, e.g. 'aaabb'
 
 ; the finite set of states

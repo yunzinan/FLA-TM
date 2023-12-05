@@ -360,8 +360,7 @@ void TuringMachine::printSingleTape(int index) {
     int n = curTape.size();
     string _index = "Index" + to_string(index) + " :";
     printf("%s", _index.c_str());
-    // TODO: to be fix in the future
-    // further job1: change the indices(specially, the -3 -2 -1 case)
+    // job1: change the indices(specially, the -3 -2 -1 case)
     /*
     e.g. this->__left[0] = 3,
          curTape.size(i.e., n) = 6
@@ -374,7 +373,7 @@ void TuringMachine::printSingleTape(int index) {
         indices[i] = i - this->__left[index]; // 0 - 3 = -3
         if (indices[i] < 0) indices[i] = -indices[i];
     } 
-    // further job2: omit the blanks
+    // job2: omit the blanks
     int l = 0, r = 0; // l should be min (first non-blank sym, header), r should be max(last non-blank sym, header[index])
     // find the l
     for (int i = 0; i < n; i++) {  
@@ -417,7 +416,7 @@ void TuringMachine::printSingleTape(int index) {
         }
     }
     printf("\n");
-    // further job3: set the correct header pos
+    // job3: set the correct header pos
     string tmp;
     for (int i = l; i < this->__head[index]; i++) {
         if(to_string(indices[i]).length() == 1) tmp += "  "; // XXX: tricky things: here we don't need to consider '10', cause we need to go over it
@@ -460,39 +459,73 @@ void TuringMachine::run(string input) {
             printf("UNACCEPTED\n");
         }
         printf("Result: ");
-        bool prefixBlank = true;
-        // FIXME: here I made a trick but the system is not robust enough, even though I can pass the test now
-        for (int i = 0; i < this->__tape[0].size(); i++) {
-            if (this->__tape[0][i] == this->_B && prefixBlank) continue;
-            else {
-                cout << this->__tape[0][i];
-                if(this->__acc == "rej") prefixBlank = false;
+        int l = 0, r = 0; // l should be min (first non-blank sym, header), r should be max(last non-blank sym, header[index])
+        // find the l
+        int n = this->__tape[0].size();
+        for (int i = 0; i < n; i++) {  
+            if (this->__tape[0][i] != this->_B) {
+                l = i;
+                break;
             }
+            else {
+                l++;
+            }
+        }
+        if (this->__head[0] < l) {l = this->__head[0];};
+        // find the r 
+        for (int i = n-1; i >= 0; i--) {
+            if (this->__tape[0][i] != this->_B) {
+                r = i;
+                break;
+            }
+            else {
+                r--;
+            }
+        }
+        if (this->__head[0] > r) r = this->__head[0];
+        for (int i = l; i <= r; i++) {
+            cout << this->__tape[0][i];
         }
         printf("\n");
         printf("==================== END ====================\n");
     }
     else {
+        int l = 0, r = 0; // l should be min (first non-blank sym, header), r should be max(last non-blank sym, header[index])
+        // find the l
+        int n = this->__tape[0].size();
+        for (int i = 0; i < n; i++) {  
+            if (this->__tape[0][i] != this->_B) {
+                l = i;
+                break;
+            }
+            else {
+                l++;
+            }
+        }
+        if (this->__head[0] < l) {l = this->__head[0];};
+        // find the r 
+        for (int i = n-1; i >= 0; i--) {
+            if (this->__tape[0][i] != this->_B) {
+                r = i;
+                break;
+            }
+            else {
+                r--;
+            }
+        }
+        if (this->__head[0] > r) r = this->__head[0];
         if (this->__acc == "acc") {
             cout << "(ACCEPTED) ";
-            for (int i = 0; i < this->__tape[0].size(); i++) {
-                if (this->__tape[0][i] == this->_B) continue;
-                else {
-                    cout << this->__tape[0][i];
-                }
+            for (int i = l; i <= r; i++) {
+                cout << this->__tape[0][i];
             }
             cout << "\n";
         }
         else {
             // "rej"
-            bool prefixBlank = true;
             cout << "(UNACCEPTED) ";
-            for (int i = 0; i < this->__tape[0].size(); i++) {
-                if (this->__tape[0][i] == this->_B && prefixBlank) continue;
-                else {
-                    cout << this->__tape[0][i];
-                    prefixBlank = false;
-                }
+            for (int i = l; i <= r; i++) {
+                cout << this->__tape[0][i];
             }
             cout << "\n";
         }

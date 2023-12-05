@@ -6,6 +6,14 @@
 
 #IncludeRegexTransform: 
 
+/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/main.cpp
+iostream
+-
+string
+-
+tm.hpp
+/mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/tm.hpp
+
 /mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/tm.cpp
 tm.hpp
 /mnt/c/Users/Jack_shen/Desktop/23Fall/FLA/TM-proj/framework/turing-project/tm.hpp
