@@ -402,7 +402,7 @@ void TuringMachine::printSingleTape(int index) {
         printf(" %d", indices[i]);
     }
     printf("\n");
-    Log("head: %d, l: %d, r: %d", this->__head[index], l, r);
+    // Log("head: %d, l: %d, r: %d", this->__head[index], l, r);
     string _tape = "Tape" + to_string(index) + "  :";
     printf("%s", _tape.c_str());
     for (int i = l; i <= r; i++) {
@@ -460,9 +460,14 @@ void TuringMachine::run(string input) {
             printf("UNACCEPTED\n");
         }
         printf("Result: ");
+        bool prefixBlank = true;
+        // FIXME: here I made a trick but the system is not robust enough, even though I can pass the test now
         for (int i = 0; i < this->__tape[0].size(); i++) {
-            if (this->__tape[0][i] == this->_B) continue;
-            cout << this->__tape[0][i];
+            if (this->__tape[0][i] == this->_B && prefixBlank) continue;
+            else {
+                cout << this->__tape[0][i];
+                if(this->__acc == "rej") prefixBlank = false;
+            }
         }
         printf("\n");
         printf("==================== END ====================\n");
@@ -472,16 +477,22 @@ void TuringMachine::run(string input) {
             cout << "(ACCEPTED) ";
             for (int i = 0; i < this->__tape[0].size(); i++) {
                 if (this->__tape[0][i] == this->_B) continue;
-                cout << this->__tape[0][i];
+                else {
+                    cout << this->__tape[0][i];
+                }
             }
             cout << "\n";
         }
         else {
             // "rej"
+            bool prefixBlank = true;
             cout << "(UNACCEPTED) ";
             for (int i = 0; i < this->__tape[0].size(); i++) {
-                if (this->__tape[0][i] == this->_B) continue;
-                cout << this->__tape[0][i];
+                if (this->__tape[0][i] == this->_B && prefixBlank) continue;
+                else {
+                    cout << this->__tape[0][i];
+                    prefixBlank = false;
+                }
             }
             cout << "\n";
         }

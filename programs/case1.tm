@@ -1,17 +1,17 @@
-; This example program checks if the input string is a binary palindrome.
-; Input: a string of 0's and 1's, e.g. '1001001'
+; this TM program is used to make a simple multiplication function
+; Input: a string of a's and b's, e.g. 'aaabb'
 
 ; the finite set of states
-#Q = {0,cp,cmp,mh,accept,accept2,accept3,accept4,halt_accept,reject,reject2,reject3,reject4,reject5,halt_reject}
+#Q = {check0,check1,check2,check3,mhc,start,mov2b,writec,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,halt_reject,halt_accept}
 
 ; the finite set of input symbols
-#S = {0,1}
+#S = {a,b}
 
 ; the complete set of tape symbols
-#G = {0,1,_,t,r,u,e,f,a,l,s}
+#G = {c,I,l,e,g,a,_,n,p,u,t} ; cccccc or Illegal_Input
 
 ; the start state
-#q0 = 0
+#q0 = check0 
 
 ; the blank symbol
 #B = _
@@ -24,44 +24,65 @@
 
 ; the transition functions
 
-; State 0: start state
-0 0_ 0_ ** cp
-0 1_ 1_ ** cp
-0 __ __ ** accept ; empty input
+check0 a_ aa rr check1 ; check1: the first sym must be a
+check0 b_ b_ ** reject ; reject state: will first move to the left and then clear the whole tape 
+check0 __ __ ** reject
 
-; State cp: copy the string to the 2nd tape 
-cp 0_ 00 rr cp
-cp 1_ 11 rr cp
-cp __ __ ll mh
+; check1 
+check1 a_ aa rr check1
+check1 b_ bb rr check2
+check1 __ __ l* reject ; so no b
 
-; State mh: move 1st head to the left
-mh 00 00 l* mh
-mh 01 01 l* mh
-mh 10 10 l* mh
-mh 11 11 l* mh
-mh _0 _0 r* cmp
-mh _1 _1 r* cmp
+; check2: once see a b, no more a 
+check2 b_ bb rr check2
+check2 a_ a_ ** reject
+check2 __ __ ll mhc ; valid, so move to the leftmost and start fxcking multiplying
 
-; State cmp: compare two strings
-cmp 00 __ rl cmp
-cmp 11 __ rl cmp
-cmp 01 __ rl reject
-cmp 10 __ rl reject
-cmp __ __ ** accept
 
-; State accept*: write 'true' on 1st tape
-accept __ t_ r* accept2
-accept2 __ r_ r* accept3
-accept3 __ u_ r* accept4
-accept4 __ e_ ** halt_accept
+; State mhc: mov&clear: the 2 heads to the left most, and clear the tape1
+mhc ** _* ll mhc
+mhc __ __ rr start
 
-; State reject*: write 'false' on 1st tape
-reject 00 __ rl reject
-reject 01 __ rl reject
-reject 10 __ rl reject
-reject 11 __ rl reject
-reject __ f_ r* reject2
-reject2 __ a_ r* reject3
-reject3 __ l_ r* reject4
-reject4 __ s_ r* reject5
-reject5 __ e_ ** halt_reject
+; State start: change the tape2's current a into _ 
+start _a __ *r mov2b
+start _b _b l* halt_accept 
+
+; State mov2b: move to the first b
+mov2b _a _a *r mov2b
+mov2b _b _b ** writec
+
+; State writec: write c on tape1
+writec _b cb rr writec
+writec __ __ *l mh ; so finished one round, go to leftmost
+
+; State mh: move the second tape to the leftmost
+mh _* _* *l mh
+mh __ __ *r start
+
+
+; State reject: move to the leftmost and clear the 1st tape
+reject ** ** l* reject
+reject *_ *_ l* reject
+reject _* _* r* reject1
+reject __ __ r* reject1
+
+; State reject1: clear the whole tape 
+reject1 ** _* r* reject1
+reject1 _* _* ** r1
+reject1 *_ __ r* reject1
+reject1 __ _c ** r1
+
+; State r*: write 'Illegal_Input' on 1st tape
+r1 _* I* r* r2
+r2 _* l* r* r3
+r3 _* l* r* r4
+r4 _* e* r* r5
+r5 _* g* r* r6
+r6 _* a* r* r7
+r7 _* l* r* r8
+r8 _* _* r* r9
+r9 _* I* r* r10
+r10 _* n* r* r11
+r11 _* p* r* r12
+r12 _* u* r* r13
+r13 _* t* ** halt_reject
