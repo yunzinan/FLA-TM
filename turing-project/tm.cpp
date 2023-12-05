@@ -51,11 +51,14 @@ bool TuringMachine::loadConfig(string tmPath) {
             if (line[0] == ';') continue; // omit the comments
             line = transform(line);
             Log("%s", line.c_str());
+
             // #Q = {0,accept,B,C,D}
             if (this->_Q.empty()) {
                 tmp = split(line, ' '); 
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
                 // tmp[2] = '{0,acc,1,this,rej}'
+                if (tmp[0] != "#Q") printSyntaxErr(); // check1: should be #Q
+                if (tmp[2][0] != '{' || tmp[2][tmp[2].length() - 1] != '}') printSyntaxErr(); // check2: should be branked by {}
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 set<string> temp;
                 tmp = split(s, ',');
@@ -70,11 +73,14 @@ bool TuringMachine::loadConfig(string tmPath) {
             else if (this->_S.empty()) {
                 tmp = split(line, ' ');
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
+                if (tmp[0] != "#S") printSyntaxErr(); // check1: should be #S
+                if (tmp[2][0] != '{' || tmp[2][tmp[2].length() - 1] != '}') printSyntaxErr(); // check2: should be branked by {}
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 tmp = split(s, ',');
                 set<string> temp;
                 for (int i = 0; i < tmp.size(); i++) {
                     Log("%s", tmp[i].c_str());
+                    if (tmp[i].length() != 1) printSyntaxErr(); // check3: each symbol should be exactly 1 character
                     temp.insert(tmp[i]);
                 } 
                 this->_S = temp;
@@ -84,11 +90,14 @@ bool TuringMachine::loadConfig(string tmPath) {
             else if (this->_G.empty()) {
                 tmp = split(line, ' ');
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
+                if (tmp[0] != "#G") printSyntaxErr(); // check1: should be #G
+                if (tmp[2][0] != '{' || tmp[2][tmp[2].length() - 1] != '}') printSyntaxErr(); // check2: should be branked by {}
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 tmp = split(s, ',');
                 set<string> temp;
                 for (int i = 0; i < tmp.size(); i++) {
                     Log("%s", tmp[i].c_str());
+                    if (tmp[i].length() != 1) printSyntaxErr(); // check3: each symbol should be exactly 1 character
                     temp.insert(tmp[i]);
                 } 
                 this->_G = temp;
@@ -98,6 +107,7 @@ bool TuringMachine::loadConfig(string tmPath) {
             else if (this->_q0.empty()) {
                 tmp = split(line, ' ');
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
+                if (tmp[0] != "#q0") printSyntaxErr(); // check1: should be #q0
                 this->_q0 = tmp[2];
                 continue;
             }
@@ -105,6 +115,7 @@ bool TuringMachine::loadConfig(string tmPath) {
             else if (this->_B.empty()) {
                 tmp = split(line, ' ');
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
+                if (tmp[0] != "#B") printSyntaxErr(); // check1: should be #B
                 this->_B = tmp[2];
                 continue;
             }
@@ -112,6 +123,8 @@ bool TuringMachine::loadConfig(string tmPath) {
             else if (this->_F.empty()) {
                 tmp = split(line, ' ');
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
+                if (tmp[0] != "#F") printSyntaxErr(); // check1: should be #F
+                if (tmp[2][0] != '{' || tmp[2][tmp[2].length() - 1] != '}') printSyntaxErr(); // check2: should be branked by {}
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 tmp = split(s, ',');
                 set<string> temp;
@@ -126,6 +139,7 @@ bool TuringMachine::loadConfig(string tmPath) {
             else if (this->_N == -1) {
                 tmp = split(line, ' ');
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
+                if (tmp[0] != "#N") printSyntaxErr(); // check1: should be #N
                 this->_N = stoi(tmp[2]);
                 continue;
             }
@@ -148,8 +162,9 @@ bool TuringMachine::loadConfig(string tmPath) {
         file.close();
     }
     else {
-        cerr << "illegal tm file path." << endl;
-        return false;
+        cerr << "illegal tm file path" << endl;
+        // return false;
+        exit(-1);
     }
     this->printConfig();
     return true;
@@ -573,4 +588,9 @@ void TuringMachine::checkInput(string input) {
         }
         exit(-1);
     }
+}
+
+void TuringMachine::printSyntaxErr() {
+    cerr << "syntax error\n";
+    exit(-1);
 }

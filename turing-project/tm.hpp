@@ -81,5 +81,6 @@ public:
     void printStep(); // print out the info of current TM
     void printSingleTape(int index); // for the need of alignment, will be done further, as not essential
     void initTape(std::string input); // init the tapes given input 
+    void printSyntaxErr(); // for the robustness of loadConfig: if missing '{', '}', ',', '#'
 
 };
