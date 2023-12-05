@@ -314,6 +314,10 @@ void TuringMachine::initTape(string input) {
         string curSym = input.substr(i, 1);
         this->__tape[0].push_back(curSym);
     }
+    //XXX: special case: if the input string is empty, then need to push a blank
+    if (input.length() == 0) {
+        this->__tape[0].push_back(this->_B);
+    }
     // now deal with the others
     for (int i = 1; i < this->_N; i++) {
         this->__tape[i].push_back(string("_"));
@@ -434,30 +438,54 @@ void TuringMachine::run(string input) {
     this->__state = this->_q0;
     this->__step = 0;
     this->__acc = "run";
-    printf("Input: %s\n", this->__input.c_str());
-    checkInput(input);
-    printf("==================== RUN ====================\n");
+    if (this->verbose) {
+        printf("Input: %s\n", this->__input.c_str());
+        checkInput(input);
+        printf("==================== RUN ====================\n");
+    }
+    else checkInput(input);
     do {
-        printStep();
+        if(this->verbose) printStep();
         step();
         this->__step++;
     }while(this->__acc == "run");
-    if (this->__acc == "acc") {
-        printStep();
-        printf("ACCEPTED\n");
+    if (this->verbose) {
+        if (this->__acc == "acc") {
+            printStep();
+            printf("ACCEPTED\n");
+        }
+        else {
+            // "rej"
+            printStep();
+            printf("UNACCEPTED\n");
+        }
+        printf("Result: ");
+        for (int i = 0; i < this->__tape[0].size(); i++) {
+            if (this->__tape[0][i] == this->_B) continue;
+            cout << this->__tape[0][i];
+        }
+        printf("\n");
+        printf("==================== END ====================\n");
     }
     else {
-        // "rej"
-        printStep();
-        printf("UNACCEPTED\n");
+        if (this->__acc == "acc") {
+            cout << "(ACCEPTED) ";
+            for (int i = 0; i < this->__tape[0].size(); i++) {
+                if (this->__tape[0][i] == this->_B) continue;
+                cout << this->__tape[0][i];
+            }
+            cout << "\n";
+        }
+        else {
+            // "rej"
+            cout << "(UNACCEPTED) ";
+            for (int i = 0; i < this->__tape[0].size(); i++) {
+                if (this->__tape[0][i] == this->_B) continue;
+                cout << this->__tape[0][i];
+            }
+            cout << "\n";
+        }
     }
-    printf("Result: ");
-    for (int i = 0; i < this->__tape[0].size(); i++) {
-        if (this->__tape[0][i] == this->_B) continue;
-        cout << this->__tape[0][i];
-    }
-    printf("\n");
-    printf("==================== END ====================\n");
 }
 
 void TuringMachine::checkInput(string input) {
@@ -471,18 +499,25 @@ void TuringMachine::checkInput(string input) {
         }
     }
     if (pos != -1) {
-        printf("==================== ERR ====================\n");
-        string s(1, input[pos]);
-        string errMsg = "error: Symbol \"" + s 
-        + "\"in input is not defined in the set of input symbols\n";
-        cout << errMsg;
-        string inputMsg = "Input: " + input + "\n";
-        cout << inputMsg;
-        for (int i = 0; i < 7 + pos; i++) {
-            printf(" ");
+        if (this->verbose) {
+            cerr << "==================== ERR ====================\n"; 
+            string s(1, input[pos]);
+            string errMsg = "error: Symbol \"" + s 
+            + "\" in input is not defined in the set of input symbols\n";
+            cerr << errMsg;
+            string inputMsg = "Input: " + input + "\n";
+            cerr << inputMsg;
+            for (int i = 0; i < 7 + pos; i++) {
+                // printf(" ");
+                cerr << " ";
+            }
+            // printf("^\n");
+            cerr << "^\n";
+            cerr << "==================== END ====================\n";
         }
-        printf("^\n");
-        printf("==================== END ====================\n");
+        else {
+            cerr << "illegal input string\n";
+        }
         exit(-1);
     }
 }
