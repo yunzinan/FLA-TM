@@ -48,11 +48,13 @@ bool TuringMachine::loadConfig(string tmPath) {
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
                 // tmp[2] = '{0,acc,1,this,rej}'
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
+                set<string> temp;
                 tmp = split(s, ',');
                 for (int i = 0; i < tmp.size(); i++) {
                     Log("%s", tmp[i].c_str());
+                    temp.insert(tmp[i]);
                 } 
-                this->_Q = tmp;
+                this->_Q = temp;
                 continue;
             }
             // #S = {0,1}
@@ -61,10 +63,12 @@ bool TuringMachine::loadConfig(string tmPath) {
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 tmp = split(s, ',');
+                set<string> temp;
                 for (int i = 0; i < tmp.size(); i++) {
                     Log("%s", tmp[i].c_str());
+                    temp.insert(tmp[i]);
                 } 
-                this->_S = tmp;
+                this->_S = temp;
                 continue;
             }
             // #G = {0,1,_,t,r,u,e,f,a,l,s}
@@ -73,10 +77,12 @@ bool TuringMachine::loadConfig(string tmPath) {
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 tmp = split(s, ',');
+                set<string> temp;
                 for (int i = 0; i < tmp.size(); i++) {
                     Log("%s", tmp[i].c_str());
+                    temp.insert(tmp[i]);
                 } 
-                this->_G = tmp;
+                this->_G = temp;
                 continue;
             }
             // #q0 = 0
@@ -99,10 +105,12 @@ bool TuringMachine::loadConfig(string tmPath) {
                 Log("%s, %s, %s", tmp[0].c_str(), tmp[1].c_str(), tmp[2].c_str());
                 string s = tmp[2].substr(1, tmp[2].length() - 2);
                 tmp = split(s, ',');
+                set<string> temp;
                 for (int i = 0; i < tmp.size(); i++) {
                     Log("%s", tmp[i].c_str());
+                    temp.insert(tmp[i]);
                 } 
-                this->_F = tmp;
+                this->_F = temp;
                 continue;
             } 
             // #N = 2
@@ -138,22 +146,23 @@ bool TuringMachine::loadConfig(string tmPath) {
     return true;
 }
 
+
 void TuringMachine::printConfig() {
     Log("======== Config =========");  
     // Q
     Log("----------  Q  ----------");
-    for (int i = 0; i < this->_Q.size(); i++) {
-        Log("%s", this->_Q[i].c_str());
+    for (auto it = this->_Q.begin(); it != this->_Q.end(); it++) {
+        Log("%s", (*it).c_str());
     }
     // S
     Log("----------  S  ----------");
-    for (int i = 0; i < this->_S.size(); i++) {
-        Log("%s", this->_S[i].c_str());
+    for (auto it = this->_S.begin(); it != this->_S.end(); it++) {
+        Log("%s", (*it).c_str());
     }
     // G
     Log("----------  G  ----------");
-    for (int i = 0; i < this->_G.size(); i++) {
-        Log("%s", this->_G[i].c_str());
+    for (auto it = this->_G.begin(); it != this->_G.end(); it++) {
+        Log("%s", (*it).c_str());
     }
     // q0
     Log("----------- q0 ----------");
@@ -163,8 +172,8 @@ void TuringMachine::printConfig() {
     Log("%s", this->_B.c_str());
     // F
     Log("----------  F  ----------");
-    for (int i = 0; i < this->_F.size(); i++) {
-        Log("%s", this->_F[i].c_str());
+    for (auto it = this->_F.begin(); it != this->_F.end(); it++) {
+        Log("%s", (*it).c_str());
     }
     // N
     Log("----------  N  ----------");
@@ -187,7 +196,105 @@ void TuringMachine::printConfig() {
 
 
 void TuringMachine::step() {
+    // step 1: find current state and get the transition 
+    // 1.1 combine the headers to make the inSym
+    string inSym; // the input symbols of each tape where their headers point to
+    for (int i = 0; i < this->_N; i++) {
+        int pos = this->__head[i];
+        inSym += this->__tape[i][pos];
+    }
+    // then get the outSym, mov, nxtState
+    trans nxt = this->findTrans(this->__state, inSym); 
+    // trans nxt = this->_trans[this->__state][inSym];
+    if (this->__acc == "rej") {
+        return ;
+    }
+    string outSym = nxt.sym;
+    string _nxtState = nxt.nxtState;
+    string mov = nxt.mov;
+    Log("curState: %s, inSym: %s | outSym: %s, mov: %s, nxtState: %s",
+                                     this->__state.c_str(), inSym.c_str(), 
+                                     outSym.c_str(), mov.c_str(), _nxtState.c_str());
+    // step 2: make the transition
+    // 2.1 change the tape 
+    for (int i = 0; i < this->_N; i++) {
+        this->__tape[i][this->__head[i]] = outSym[i];
+    }
+    // 2.2 make the move
+    for (int i = 0; i < this->_N; i++) {
+        string blank = "_";
+        switch (mov[i])
+        {
+        case 'l':
+            this->__head[i]--;
+            if (this->__head[i] < 0) {
+                this->__head[i] = 0;
+                this->__tape[i].push_front(blank);
+                this->__left[i]++;
+            }
+            break;
+        case 'r': 
+            this->__head[i]++;
+            if (this->__head[i]>= this->__tape[i].size()) {
+                this->__tape[i].push_back(blank);
+            }
+            break;
+        case '*':
+            // so don't move
+            break;
+        default:
+            // should not go there
+            Log("[error]: invalid move!");
+            exit(-1);
+            break;
+        }
+    }
+    // 2.3 change the state
+    this->__state = _nxtState;
+    if (this->_F.find(this->__state) != this->_F.end()) {
+        this->__acc = "acc";
+        return ;
+    }
+}
 
+trans TuringMachine::findTrans(string state, string sym) {
+    // first case, if there exists the exact match, then bingo!
+    trans ret;
+    auto it = this->_trans[state].find(sym);
+    if (it != this->_trans[state].end()) {
+        return it->second;
+    }
+    //second case, try to find if there is a wider rule for that 
+    else {
+        bool flag = false;
+        for (auto it = this->_trans[state].begin(); it != this->_trans[state].end(); it++) {
+            string ruleSym = it->first;
+            ret = it->second;
+            // e.g.  "ADC_" -> "A*C_"
+            // goal: if the cursym, replace it with the current one
+            string tmp = ruleSym;
+            // replace the rule of * by sym
+            for (int i = 0; i < tmp.length(); i++) {
+                if (tmp[i] == '*' && sym[i] != '_') {
+                    tmp[i] = sym[i];
+                    if (ret.sym[i] == '*') {
+                        ret.sym[i] = sym[i];
+                    }
+                }
+            }  
+            if (tmp == sym) {
+                flag = true;
+                return ret;
+            }
+        }
+        if (!flag) {
+            // third case, no rule for the current status, boom
+            Log("[error]: no matching rules found!");
+            this->__acc = "rej";
+        }
+    }
+    // should not go there
+    return ret;
 }
 
 
@@ -195,9 +302,12 @@ void TuringMachine::initTape(string input) {
     // we can always assmue that in the step 0, only 0th tape has non-blank info
     this->__tape.resize(this->_N);
     this->__head.resize(this->_N);
+    this->__left.resize(this->_N);
     for (int i = 0; i < this->_N; i++) {
         this->__head[i] = 0;
+        this->__left[i] = 0;
     }
+    // Log("[breakpoint]");
     // init the 0th tape
     // input e.g.: 1001001
     for (int i = 0; i < input.length(); i++) {
@@ -228,7 +338,7 @@ void TuringMachine::printStep() {
     string _step      = "Step   : " + to_string(this->__step) + "\n";
     string _state     = "State  : " + this->__state + "\n"; 
     string _acc;
-    if (this->__acc) {_acc = "Acc    : Yes\n";}
+    if (this->__acc == "acc") {_acc = "Acc    : Yes\n";}
     else {_acc =             "Acc    : No\n";}
     printf("%s", _step.c_str());
     printf("%s", _state.c_str());
@@ -263,15 +373,60 @@ void TuringMachine::printSingleTape(int index) {
 }
 
 void TuringMachine::run(string input) {
+    // Log("[breakpoint]");
     this->__input = input;
     this->initTape(this->__input);
     this->__state = this->_q0;
     this->__step = 0;
-    this->__acc = false;
+    this->__acc = "run";
     printf("Input: %s\n", this->__input.c_str());
+    checkInput(input);
     printf("==================== RUN ====================\n");
-    printStep();
-    // do {
-    //     step();
-    // }while(!this->__acc);
+    do {
+        printStep();
+        step();
+        this->__step++;
+    }while(this->__acc == "run");
+    if (this->__acc == "acc") {
+        printStep();
+        printf("ACCEPTED\n");
+    }
+    else {
+        // "rej"
+        printStep();
+        printf("UNACCEPTED\n");
+    }
+    printf("Result: ");
+    for (int i = 0; i < this->__tape[0].size(); i++) {
+        cout << this->__tape[0][i];
+    }
+    printf("\n");
+    printf("==================== END ====================\n");
+}
+
+void TuringMachine::checkInput(string input) {
+    // check if there exists any invalid input, that is not in the _S
+    int pos = -1;
+    for(int i = 0; i < input.length(); i++) {
+        auto it = this->_S.find(string(1, input[i]));
+        if (it == this->_S.end()) {
+            // so not find
+            pos = i; 
+        }
+    }
+    if (pos != -1) {
+        printf("==================== ERR ====================\n");
+        string s(1, input[pos]);
+        string errMsg = "error: Symbol \"" + s 
+        + "\"in input is not defined in the set of input symbols\n";
+        cout << errMsg;
+        string inputMsg = "Input: " + input + "\n";
+        cout << inputMsg;
+        for (int i = 0; i < 7 + pos; i++) {
+            printf(" ");
+        }
+        printf("^\n");
+        printf("==================== END ====================\n");
+        exit(-1);
+    }
 }

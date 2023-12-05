@@ -1,6 +1,7 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
+#include <set>
 #include <string>
 #include <queue>
 #include <map>
@@ -36,12 +37,12 @@ typedef struct trans{
 class TuringMachine{
     bool verbose = false;
     // the config
-    std::vector<std::string> _Q; // the set of states
-    std::vector<std::string> _S; // the set of input symbols
-    std::vector<std::string> _G; // the set of tape symbols
+    std::set<std::string> _Q; // the set of states
+    std::set<std::string> _S; // the set of input symbols
+    std::set<std::string> _G; // the set of tape symbols
     std::string _q0; // the starting state
     std::string _B; // the blank symbol
-    std::vector<std::string> _F; // the set of final states 
+    std::set<std::string> _F; // the set of final states 
     int _N = -1; // the number of tapes
     std::map<std::string, std::map<std::string, trans>> _trans; // the transition function
     // usage: _trans['stateName1']['input syms'] = {'output symgs', 'movs'}
@@ -49,10 +50,11 @@ class TuringMachine{
     std::string __input;
     std::string __state; 
     std::vector<std::deque<std::string>> __tape; //tape[i][j] means the ith tape the jth index: should be a char 
+    std::vector<int> __left; // to keep track of the leftmost place of each tape
     std::vector<int> __head; // which points out the cur pos of each tape
     int __step; // the counter of running steps
-    bool __acc; // whether the turing machine accepts now
-
+    std::string __acc; // whether the turing machine accepts now, "acc", "rej", 'run'
+    trans findTrans(std::string state, std::string sym); //find the exact trans of current status, mainly deal with asterisk
     
 
 public:
@@ -64,6 +66,7 @@ public:
         this->verbose = true;
     }
     bool loadConfig(std::string tmPath); // return true if successfully loaded <tm>; false otherwise.
+    void checkInput(std::string input); // check whether the input is valid
     void run(std::string input); // the wrapper function of the simulation
     void step(); // one single step the turing machine
     void printConfig(); // for debug use: print the def of the TM
