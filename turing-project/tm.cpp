@@ -1,3 +1,12 @@
+/**
+ * this is the project of NJU Formal Language and Automata 2023 Fall course 
+ * @author: yunzinan
+ * @date: 2023/12/5
+ * @brief: the implementation of class TuringMachine
+*/
+
+
+
 #include "tm.hpp"
 
 using namespace std;

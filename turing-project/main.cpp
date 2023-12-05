@@ -1,3 +1,11 @@
+/**
+ * this is the project of NJU Formal Language and Automata 2023 Fall course 
+ * @author: yunzinan
+ * @date: 2023/12/5
+ * @brief: the program entry and the interactive panel of the program
+*/
+
+
 #include <iostream>
 #include <string>
 #include "tm.hpp"
