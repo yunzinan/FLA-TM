@@ -156,6 +156,16 @@ bool TuringMachine::loadConfig(string tmPath) {
                 cur.mov = tmp[3];
                 cur.nxtState = tmp[4];
                 this->_trans[state][cursym] = cur;
+                if (this->_Q.find(state) == this->_Q.end() || this->_Q.find(cur.nxtState) == this->_Q.end()) {
+                    if (this->_Q.find(state) == this->_Q.end()) {
+                        Log("%s missing in definition!", state.c_str());
+                    }
+                    if (this->_Q.find(cur.nxtState) == this->_Q.end()) {
+                        Log("%s missing in definition!", cur.nxtState.c_str());
+                    }
+                    cerr << "new state found in transition function!\n";
+                    exit(-1);
+                }
             }
         }
 
@@ -239,6 +249,9 @@ void TuringMachine::step() {
     Log("curState: %s, inSym: %s | outSym: %s, mov: %s, nxtState: %s",
                                      this->__state.c_str(), inSym.c_str(), 
                                      outSym.c_str(), mov.c_str(), _nxtState.c_str());
+    if (this->_Q.find(this->__state) == this->_Q.end()) {
+        Log("Error: cur state [%s] not found in the list! check the program case!", this->__state.c_str());
+    }
     // step 2: make the transition
     // 2.1 change the tape 
     for (int i = 0; i < this->_N; i++) {

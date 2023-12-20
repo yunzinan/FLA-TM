@@ -4,7 +4,7 @@
 ; Input: a string of a's and b's, e.g. 'aaabb'
 
 ; the finite set of states
-#Q = {check0,check1,check2,check3,mhc,start,mov2b,writec,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,halt_reject,halt_accept}
+#Q = {check0,check1,check2,check3,mhc,start,mov2b,writec,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,halt_reject,halt_accept,reject,mh,reject1}
 
 ; the finite set of input symbols
 #S = {a,b}

@@ -11,7 +11,7 @@
 ; 5.2 if no diff found, then goto accept(write true, since now the two tapes are already cleared)
 
 ; the finite set of states
-#Q = {check0,cp,cmp,mh,accept,accept2,accept3,accept4,halt_accept,reject,reject2,reject3,reject4,reject5,halt_reject}
+#Q = {check0,check1,1movl,r1,r2,r3,r4,r5,cp,cmp,mh,accept,accept2,accept3,accept4,halt_accept,reject,reject2,reject3,reject4,reject5,halt_reject}
 
 ; the finite set of input symbols
 #S = {a,b,c}
