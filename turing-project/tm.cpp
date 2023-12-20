@@ -240,7 +240,7 @@ void TuringMachine::step() {
     // then get the outSym, mov, nxtState
     trans nxt = this->findTrans(this->__state, inSym); 
     // trans nxt = this->_trans[this->__state][inSym];
-    if (this->__acc == "rej") {
+    if (this->__halt) {
         return ;
     }
     string outSym = nxt.sym;
@@ -286,6 +286,7 @@ void TuringMachine::step() {
             break;
         }
     }
+    // XXX: @note: here, we don't halt the machine instantly, and only halt when there is no move.
     // 2.3 change the state
     this->__state = _nxtState;
     if (this->_F.find(this->__state) != this->_F.end()) {
@@ -326,8 +327,12 @@ trans TuringMachine::findTrans(string state, string sym) {
         }
         if (!flag) {
             // third case, no rule for the current status, boom
-            Log("[error]: no matching rules found!");
-            this->__acc = "rej";
+            Log("[halt]: no matching rules found!");
+            // this->__acc = "rej";
+            this->__halt = true;
+            if (this->__acc != "acc") {
+                this->__acc = "rej";
+            }
         }
     }
     // should not go there
@@ -380,7 +385,7 @@ void TuringMachine::printStep() {
     string _state     = "State  : " + this->__state + "\n"; 
     string _acc;
     if (this->__acc == "acc") {_acc = "Acc    : Yes\n";}
-    else {_acc =             "Acc    : No\n";}
+    else {_acc =                      "Acc    : No\n";}
     printf("%s", _step.c_str());
     printf("%s", _state.c_str());
     printf("%s", _acc.c_str()); 
@@ -484,15 +489,15 @@ void TuringMachine::run(string input) {
         if(this->verbose) printStep();
         step();
         this->__step++;
-    }while(this->__acc == "run");
+    }while(!this->__halt);
     if (this->verbose) {
         if (this->__acc == "acc") {
-            printStep();
+            // printStep();
             printf("ACCEPTED\n");
         }
         else {
             // "rej"
-            printStep();
+            // printStep();
             printf("UNACCEPTED\n");
         }
         printf("Result: ");

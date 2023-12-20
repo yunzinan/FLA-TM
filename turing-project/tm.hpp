@@ -19,7 +19,7 @@
 #include <string.h>
 // this is used for keeping track of the running status of the prog. all unnecessary output will use Log(...)
 // note that in verbose mode, all output will use printf/cout/cerr
-#define DEBUG
+// #define DEBUG
 
 
 #define __FILENAME__ (strrchr(__FILE__, '/') ? (strrchr(__FILE__, '/') + 1):__FILE__)
@@ -62,6 +62,7 @@ class TuringMachine{
     std::vector<int> __head; // which points out the cur pos of each tape
     int __step; // the counter of running steps
     std::string __acc; // whether the turing machine accepts now, "acc", "rej", 'run'
+    bool __halt = false;
     trans findTrans(std::string state, std::string sym); //find the exact trans of current status, mainly deal with asterisk
     
 
