@@ -83,5 +83,6 @@ public:
     void printSingleTape(int index); // for the need of alignment, will be done further, as not essential
     void initTape(std::string input); // init the tapes given input 
     void printSyntaxErr(); // for the robustness of loadConfig: if missing '{', '}', ',', '#'
+    bool preCheck(std::string input); // just do the same thing as checkInput
 
 };

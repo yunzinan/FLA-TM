@@ -480,7 +480,14 @@ void TuringMachine::run(string input) {
     this->__step = 0;
     this->__acc = "run";
     if (this->verbose) {
-        printf("Input: %s\n", this->__input.c_str());
+        string tmp = "Input: " + this->__input + "\n";
+        if (preCheck(input)) {
+            cout << tmp;
+        }
+        else {
+            cerr << tmp;
+        }
+        // printf("Input: %s\n", this->__input.c_str());
         checkInput(input);
         printf("==================== RUN ====================\n");
     }
@@ -513,7 +520,8 @@ void TuringMachine::run(string input) {
                 l++;
             }
         }
-        if (this->__head[0] < l) {l = this->__head[0];};
+        // XXX: @note: according to manual, l is the first non-blank symbol, no matter where the head is
+        // if (this->__head[0] < l) {l = this->__head[0];};
         // find the r 
         for (int i = n-1; i >= 0; i--) {
             if (this->__tape[0][i] != this->_B) {
@@ -524,7 +532,8 @@ void TuringMachine::run(string input) {
                 r--;
             }
         }
-        if (this->__head[0] > r) r = this->__head[0];
+        // XXX: @note: according to manual, l is the first non-blank symbol, no matter where the head is
+        // if (this->__head[0] > r) r = this->__head[0];
         for (int i = l; i <= r; i++) {
             cout << this->__tape[0][i];
         }
@@ -544,7 +553,7 @@ void TuringMachine::run(string input) {
                 l++;
             }
         }
-        if (this->__head[0] < l) {l = this->__head[0];};
+        // if (this->__head[0] < l) {l = this->__head[0];};
         // find the r 
         for (int i = n-1; i >= 0; i--) {
             if (this->__tape[0][i] != this->_B) {
@@ -555,7 +564,7 @@ void TuringMachine::run(string input) {
                 r--;
             }
         }
-        if (this->__head[0] > r) r = this->__head[0];
+        // if (this->__head[0] > r) r = this->__head[0];
         if (this->__acc == "acc") {
             cout << "(ACCEPTED) ";
             for (int i = l; i <= r; i++) {
@@ -574,6 +583,23 @@ void TuringMachine::run(string input) {
     }
 }
 
+// just do the same thing as checkInput
+bool TuringMachine::preCheck(string input) {
+    // check if there exists any invalid input, that is not in the _S
+    int pos = -1;
+    for(int i = 0; i < input.length(); i++) {
+        auto it = this->_S.find(string(1, input[i]));
+        if (it == this->_S.end()) {
+            // so not find
+            pos = i; 
+        }
+    }
+    if (pos != -1) {
+        return false;
+    }
+    return true;
+}
+
 void TuringMachine::checkInput(string input) {
     // check if there exists any invalid input, that is not in the _S
     int pos = -1;
@@ -582,6 +608,7 @@ void TuringMachine::checkInput(string input) {
         if (it == this->_S.end()) {
             // so not find
             pos = i; 
+            break;
         }
     }
     if (pos != -1) {
